@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
+<title>PetCare HQ</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0f172a;
+    --navy-soft:#334155;
+    --blue:#2563eb;
+    --blue-dark:#1d4ed8;
+    --blue-tint:#eff6ff;
+    --bg:#f8fafc;
+    --card:#ffffff;
+    --border:#e6eaf0;
+    --success:#16a34a;
+    --success-tint:#f0fdf4;
+    --danger:#dc2626;
+    --danger-tint:#fef2f2;
+    --amber:#d97706;
+    --amber-tint:#fffbeb;
+  }
+  *{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
+  body{background:var(--bg); -webkit-tap-highlight-color:transparent;}
+  ::-webkit-scrollbar{width:0;height:0;}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:16px;}
+  .btn-primary{background:var(--blue); color:#fff; border-radius:12px; font-weight:600; transition:.15s;}
+  .btn-primary:active{background:var(--blue-dark); transform:scale(.98);}
+  .btn-ghost{background:#fff; color:var(--navy); border:1px solid var(--border); border-radius:12px; font-weight:600;}
+  .input-field{background:#fff; border:1px solid var(--border); border-radius:12px; padding:10px 14px; width:100%; font-size:14px; color:var(--navy); outline:none;}
+  .input-field:focus{border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-tint);}
+  .label-sm{font-size:12px; font-weight:600; color:var(--navy-soft); margin-bottom:6px; display:block;}
+  .nav-item{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; flex:1; padding:8px 0 6px; color:#94a3b8; transition:.2s;}
+  .nav-item.active{color:var(--blue);}
+  .nav-item svg{width:22px; height:22px;}
+  .fade-in{animation:fadeIn .25s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+  .spinner{width:36px; height:36px; border:3px solid var(--blue-tint); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .chip{padding:6px 14px; border-radius:999px; font-size:13px; font-weight:600; border:1px solid var(--border); background:#fff; color:var(--navy-soft); white-space:nowrap;}
+  .chip.active{background:var(--navy); color:#fff; border-color:var(--navy);}
+  .modal-backdrop{background:rgba(15,23,42,.5); backdrop-filter:blur(2px);}
+  .modal-sheet{border-radius:20px 20px 0 0; max-height:88vh;}
+  .toast{border-radius:12px; box-shadow:0 10px 30px rgba(15,23,42,.18);}
+  .fab{box-shadow:0 8px 20px rgba(37,99,235,.35);}
+  .avatar-ring{padding:2px; border-radius:999px; background:linear-gradient(135deg,var(--blue),#60a5fa);}
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ============ HEADER ============ -->
+<header class="fixed top-0 left-0 right-0 z-30 bg-white/90 backdrop-blur border-b" style="border-color:var(--border);">
+  <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-xl flex items-center justify-center" style="background:var(--navy);">
+        <svg viewBox="0 0 24 24" fill="none" class="w-4.5 h-4.5" style="width:18px;height:18px;">
+          <path d="M9 10c1.5 1.5 1.5 4 0 5.5S4 17 3 15.5 3.5 11 5 9.5 7.5 8.5 9 10Z" stroke="#fff" stroke-width="1.6"/>
+          <path d="M15 10c-1.5 1.5-1.5 4 0 5.5s5 1.5 6 0-.5-6-2-7.5-3-1.5-4-1.5" stroke="#fff" stroke-width="1.6"/>
+        </svg>
+      </div>
+      <span class="font-extrabold text-[15px] tracking-tight" style="color:var(--navy);">PetCare<span style="color:var(--blue);">HQ</span></span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="settingsBtn" class="w-8 h-8 rounded-full flex items-center justify-center active:scale-95 transition" style="background:var(--bg); border:1px solid var(--border);" title="Bağlantı ayarları">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="#334155" stroke-width="1.7"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V20a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.04-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87A1.7 1.7 0 0 0 4.1 12.46H4a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.56-1.04 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H10a1.7 1.7 0 0 0 1.04-1.56V4a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1.04 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V10a1.7 1.7 0 0 0 1.56 1.04H20a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.56 1.04Z" stroke="#334155" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      </button>
+      <button id="petSwitcher" class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full active:scale-95 transition" style="background:var(--blue-tint);">
+        <div class="avatar-ring">
+          <img id="headerPetPhoto" src="" class="w-7 h-7 rounded-full object-cover bg-white" style="display:none;">
+          <div id="headerPetInitial" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style="background:var(--blue);">?</div>
+        </div>
+        <span id="headerPetName" class="text-[13px] font-semibold" style="color:var(--navy);">Pet seç</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#334155" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ CONTENT ============ -->
+<main id="content" class="max-w-md mx-auto px-4 pt-[68px] pb-[96px] min-h-screen"></main>
+
+<!-- ============ BOTTOM NAV ============ -->
+<nav class="fixed bottom-0 left-0 right-0 z-30 bg-white border-t" style="border-color:var(--border);">
+  <div class="max-w-md mx-auto flex" id="bottomNav">
+    <button class="nav-item active" data-tab="dashboard">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 11l9-7 9 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="text-[10.5px] font-semibold">Profil</span>
+    </button>
+    <button class="nav-item" data-tab="medical">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M20.8 8.6c0 6-8.8 11-8.8 11s-8.8-5-8.8-11a5 5 0 0 1 8.8-3.2A5 5 0 0 1 20.8 8.6Z" stroke="currentColor" stroke-width="1.8"/><path d="M8 12h2l1.2-2.5L12.5 14 14 12h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="text-[10.5px] font-semibold">Sağlık</span>
+    </button>
+    <button class="nav-item" data-tab="hotel">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 21V9l9-5 9 5v12" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 21v-6h6v6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <span class="text-[10.5px] font-semibold">Otel</span>
+    </button>
+    <button class="nav-item" data-tab="finance">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.8"/><circle cx="16.5" cy="14" r="1.2" fill="currentColor"/></svg>
+      <span class="text-[10.5px] font-semibold">Finans</span>
+    </button>
+    <button class="nav-item" data-tab="nutrition">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 0 0 16 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 12a8 4 0 0 1 16 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M9 6.5c0-1.5 1-3 1-3s1 1.5 1 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span class="text-[10.5px] font-semibold">Beslenme</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ============ LOADING OVERLAY ============ -->
+<div id="loadingOverlay" class="fixed inset-0 z-50 flex items-center justify-center" style="background:rgba(248,250,252,.85); display:none;">
+  <div class="flex flex-col items-center gap-3">
+    <div class="spinner"></div>
+    <span class="text-sm font-semibold" style="color:var(--navy-soft);">Yükleniyor...</span>
+  </div>
+</div>
+
+<!-- ============ TOAST CONTAINER ============ -->
+<div id="toastContainer" class="fixed top-4 left-0 right-0 z-[60] flex flex-col items-center gap-2 px-4"></div>
+
+<!-- ============ MODAL ROOT ============ -->
+<div id="modalRoot"></div>
+
+<script>
+/* =========================================================================
+   ⚙️ CONFIG — Google Apps Script Web App URL'i
+   Kod içine elle yazmana gerek yok: uygulama açıldığında "Kurulum gerekiyor"
+   ekranından ya da sağ üstteki ⚙️ ayarlar butonundan girip kaydedebilirsin.
+   Kaydedilen URL tarayıcının localStorage'ında saklanır (bu dosyayı bir
+   sunucuda barındırdığında veya doğrudan tarayıcıda açtığında kalıcıdır;
+   Claude'un artifact önizlemesi içinde localStorage çalışmayabilir — o
+   durumda dosyayı indirip kendi tarayıcında açman gerekir).
+   ========================================================================= */
+const STORAGE_KEY = 'petcarehq_api_url';
+const CONFIG = {
+  API_URL: ""
+};
+function loadStoredApiUrl(){
+  try { return localStorage.getItem(STORAGE_KEY) || ''; } catch(e){ return ''; }
+}
+function saveStoredApiUrl(url){
+  try { localStorage.setItem(STORAGE_KEY, url); return true; } catch(e){ return false; }
+}
+CONFIG.API_URL = loadStoredApiUrl();
+
+/* =========================================================================
+   STATE
+   ========================================================================= */
+const state = {
+  pets: [],
+  activePetId: null,
+  data: { Vaccines: [], Medications: [], Boarding: [], Expenses: [], NutritionLog: [] },
+  settings: { id: null, reminderEmail: '' },
+  activeTab: 'dashboard',
+  medicalSubTab: 'vaccines',
+  nutritionFilter: 'all'
+};
+
+const SPECIES_META = {
+  'Köpek': { icon: '🐶' },
+  'Kedi': { icon: '🐱' },
+  'Diğer': { icon: '🐾' }
+};
+
+const CURRENCIES = [
+  { code: 'TRY', label: 'TL (₺)' },
+  { code: 'USD', label: 'Dolar ($)' },
+  { code: 'EUR', label: 'Euro (€)' },
+  { code: 'GBP', label: 'Sterlin (£)' },
+  { code: 'CHF', label: 'İsviçre Frangı' }
+];
+const DEFAULT_CURRENCY = 'TRY';
+function currencyOptionsHtml(selected){
+  return CURRENCIES.map(c=>`<option value="${c.code}" ${selected===c.code?'selected':''}>${c.label}</option>`).join('');
+}
+
+/* =========================================================================
+   API HELPERS
+   ========================================================================= */
+function isConfigured(){
+  return CONFIG.API_URL && CONFIG.API_URL.indexOf('http') === 0;
+}
+
+async function apiListAll(){
+  const res = await fetch(`${CONFIG.API_URL}?action=listAll`);
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'Bilinmeyen hata');
+  return json.data;
+}
+
+async function apiCreate(sheet, data){
+  return apiMutate('create', sheet, null, data);
+}
+async function apiUpdate(sheet, id, data){
+  return apiMutate('update', sheet, id, data);
+}
+async function apiDelete(sheet, id){
+  return apiMutate('delete', sheet, id, {});
+}
+async function apiMutate(action, sheet, id, data){
+  const res = await fetch(CONFIG.API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // preflight'tan kaçınmak için text/plain
+    body: JSON.stringify({ action, sheet, id, data })
+  });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'İşlem başarısız');
+  return json.data;
+}
+
+/** Sheet gerektirmeyen özel action'lar için (test e-postası, hatırlatma kontrolü vb.) */
+async function apiAction(action, data){
+  const res = await fetch(CONFIG.API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action, data })
+  });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'İşlem başarısız');
+  return json.data;
+}
+
+/** Tüm hatırlatma e-postaları için kullanılan tek/ortak adresi kaydeder (Pet formlarından çağrılır). */
+async function saveReminderEmailIfChanged(email){
+  const trimmed = (email || '').trim();
+  if (trimmed === (state.settings.reminderEmail || '')) return; // değişmemişse hiç istek atma
+  try{
+    if (state.settings.id){
+      state.settings = await apiUpdate('Settings', state.settings.id, { reminderEmail: trimmed });
+    } else {
+      state.settings = await apiCreate('Settings', { reminderEmail: trimmed });
+    }
+  } catch(err){
+    showToast('Hatırlatma e-postası kaydedilemedi: ' + err.message, 'error');
+  }
+}
+
+/* =========================================================================
+   UI HELPERS — loading / toast / modal
+   ========================================================================= */
+function setLoading(on){
+  document.getElementById('loadingOverlay').style.display = on ? 'flex' : 'none';
+}
+
+function showToast(message, type='success'){
+  const colors = {
+    success: { bg: 'var(--success-tint)', fg: 'var(--success)', icon: '✓' },
+    error: { bg: 'var(--danger-tint)', fg: 'var(--danger)', icon: '✕' },
+    info: { bg: 'var(--blue-tint)', fg: 'var(--blue)', icon: 'i' }
+  };
+  const c = colors[type] || colors.info;
+  const el = document.createElement('div');
+  el.className = 'toast fade-in flex items-center gap-2 px-4 py-3 text-sm font-semibold max-w-sm w-full';
+  el.style.background = '#fff';
+  el.style.border = `1px solid ${c.fg}22`;
+  el.innerHTML = `<span class="w-5 h-5 rounded-full flex items-center justify-center text-[11px]" style="background:${c.bg};color:${c.fg};">${c.icon}</span><span style="color:var(--navy);">${message}</span>`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='.3s'; setTimeout(()=>el.remove(),300); }, 2600);
+}
+
+function openModal(innerHtml){
+  const root = document.getElementById('modalRoot');
+  root.innerHTML = `
+    <div class="fixed inset-0 z-50 flex items-end justify-center modal-backdrop" id="modalBackdrop">
+      <div class="modal-sheet bg-white w-full max-w-md overflow-y-auto fade-in" id="modalSheet">
+        ${innerHtml}
+      </div>
+    </div>`;
+  document.getElementById('modalBackdrop').addEventListener('click', (e)=>{
+    if (e.target.id === 'modalBackdrop') closeModal();
+  });
+}
+function closeModal(){
+  document.getElementById('modalRoot').innerHTML = '';
+}
+
+function fmtDate(d){
+  if (!d) return '—';
+  const date = new Date(d);
+  if (isNaN(date)) return d;
+  return date.toLocaleDateString('tr-TR', { day:'2-digit', month:'short', year:'numeric' });
+}
+function fmtMoney(n, currency){
+  const v = Number(n)||0;
+  const code = currency || DEFAULT_CURRENCY;
+  try{
+    return new Intl.NumberFormat('tr-TR', { style:'currency', currency: code }).format(v);
+  } catch(e){
+    return v.toLocaleString('tr-TR', { minimumFractionDigits:2, maximumFractionDigits:2 }) + ' ' + code;
+  }
+}
+/** Farklı para birimlerindeki tutarları tek satırda özetler: "120,00 € · 45,00 $" gibi. */
+function fmtGroupedTotals(records, amountField, currencyField='currency'){
+  const totals = {};
+  records.forEach(r=>{
+    const code = r[currencyField] || DEFAULT_CURRENCY;
+    totals[code] = (totals[code]||0) + (Number(r[amountField])||0);
+  });
+  const codes = Object.keys(totals);
+  if (!codes.length) return fmtMoney(0);
+  return codes.map(code=> fmtMoney(totals[code], code)).join(' · ');
+}
+function daysUntil(d){
+  if (!d) return null;
+  const now = new Date(); now.setHours(0,0,0,0);
+  const target = new Date(d); target.setHours(0,0,0,0);
+  return Math.round((target-now)/86400000);
+}
+/** Geri sayımı okunur metne çevirir: gelecekte "5 gün", bugün "Bugün", geçmişte "3 gün gecikti". */
+function daysLabelText(d){
+  if (d === null) return '';
+  if (d < 0) return Math.abs(d) + ' gün gecikti';
+  if (d === 0) return 'Bugün';
+  return d + ' gün';
+}
+function uid(){ return 'tmp_' + Math.random().toString(36).slice(2,9); }
+
+/* =========================================================================
+   MAMA STOKU — İLERLEME ÇUBUĞU
+   ========================================================================= */
+function computeStockProgress(record){
+  const totalDays = Number(record && record.estimatedDays) || 0;
+  if (!totalDays || !record.date) return null;
+  const elapsed = daysUntil(record.date) !== null ? -daysUntil(record.date) : null; // geçen gün sayısı
+  if (elapsed === null) return null;
+  const remainingDays = Math.max(totalDays - elapsed, 0);
+  const remainingPct = Math.max(0, Math.min(100, Math.round((remainingDays/totalDays)*100)));
+  let color, zone;
+  if (remainingPct >= 50){ color = 'var(--success)'; zone = 'green'; }
+  else if (remainingPct >= 25){ color = 'var(--amber)'; zone = 'amber'; }
+  else { color = 'var(--danger)'; zone = 'red'; }
+  return { totalDays, elapsed, remainingDays, remainingPct, color, zone };
+}
+function stockProgressBarHtml(progress){
+  if (!progress) return `<p class="text-[11px] mt-1" style="color:#94a3b8;">Tahmini tüketim süresi girilmemiş</p>`;
+  const label = progress.remainingDays <= 0 ? 'Stok tükendi' : progress.remainingDays + ' gün kaldı';
+  return `
+  <div class="mt-2">
+    <div class="flex justify-between items-center mb-1">
+      <span class="text-[11px] font-bold" style="color:${progress.color};">${label}</span>
+      <span class="text-[11px]" style="color:#94a3b8;">%${progress.remainingPct}</span>
+    </div>
+    <div class="w-full h-2 rounded-full overflow-hidden" style="background:#e6eaf0;">
+      <div class="h-full rounded-full" style="width:${progress.remainingPct}%; background:${progress.color}; transition:width .3s;"></div>
+    </div>
+  </div>`;
+}
+
+/* =========================================================================
+   İLAÇ TAKVİMİ — gün-gün akordion yardımcıları
+   ========================================================================= */
+function parseJsonArraySafe(str){
+  try{ const a = JSON.parse(str || '[]'); return Array.isArray(a) ? a : []; } catch(e){ return []; }
+}
+function dateOnlyDate(d){
+  const x = new Date(d); x.setHours(0,0,0,0); return x;
+}
+function daysCountInclusive(startStr, endStr){
+  const start = dateOnlyDate(startStr), end = dateOnlyDate(endStr);
+  return Math.round((end-start)/86400000) + 1;
+}
+function isoDateStr(d){
+  const x = new Date(d);
+  return x.getFullYear() + '-' + String(x.getMonth()+1).padStart(2,'0') + '-' + String(x.getDate()).padStart(2,'0');
+}
+function buildMedicationDayRows(r){
+  const totalDays = daysCountInclusive(r.startDate, r.endDate);
+  const completed = parseJsonArraySafe(r.completedDates);
+  let rows = '';
+  for (let i=0;i<totalDays;i++){
+    const d = dateOnlyDate(r.startDate); d.setDate(d.getDate()+i);
+    const iso = isoDateStr(d);
+    const isDone = completed.includes(iso);
+    rows += `
+    <label class="flex items-center justify-between py-2 px-1 border-b last:border-b-0" style="border-color:var(--border);">
+      <span class="text-xs ${isDone?'line-through':''}" style="color:${isDone?'#94a3b8':'var(--navy)'};">${fmtDate(iso)}</span>
+      <input type="checkbox" class="med-day-check w-5 h-5 accent-blue-600" data-med-id="${r.id}" data-date="${iso}" ${isDone?'checked':''}>
+    </label>`;
+  }
+  return rows;
+}
+function toggleMedAccordion(id){
+  const el = document.getElementById('med-days-'+id);
+  const chevron = document.getElementById('chevron-'+id);
+  if (!el) return;
+  el.classList.toggle('hidden');
+  if (chevron) chevron.style.transform = el.classList.contains('hidden') ? '' : 'rotate(180deg)';
+}
+
+/* =========================================================================
+   IMAGE RESIZE (base64, Sheets hücresine sığması için küçültülür)
+   ========================================================================= */
+function resizeImageFile(file, maxSize=320){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const canvas = document.createElement('canvas');
+        let { width, height } = img;
+        if (width > height && width > maxSize){ height *= maxSize/width; width = maxSize; }
+        else if (height > maxSize){ width *= maxSize/height; height = maxSize; }
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/* =========================================================================
+   VERİ ÇEKME
+   ========================================================================= */
+async function loadAll(){
+  if (!isConfigured()){
+    showToast('Lütfen önce CONFIG.API_URL alanını Apps Script Web App linkinle doldur.', 'error');
+    renderTab();
+    return;
+  }
+  setLoading(true);
+  try {
+    const all = await apiListAll();
+    state.pets = all.Pets || [];
+    state.data.Vaccines = all.Vaccines || [];
+    state.data.Medications = all.Medications || [];
+    state.data.Boarding = all.Boarding || [];
+    state.data.Expenses = all.Expenses || [];
+    state.data.NutritionLog = all.NutritionLog || [];
+    const settingsRow = (all.Settings || []).find(s=>s.reminderEmail) || (all.Settings || [])[0];
+    state.settings = settingsRow ? settingsRow : { id: null, reminderEmail: '' };
+    if (!state.activePetId || !state.pets.find(p=>p.id===state.activePetId)){
+      state.activePetId = state.pets[0] ? state.pets[0].id : null;
+    }
+    renderHeader();
+    renderTab();
+  } catch(err){
+    showToast('Veri çekilemedi: ' + err.message, 'error');
+  } finally {
+    setLoading(false);
+  }
+}
+
+function activePet(){ return state.pets.find(p=>p.id===state.activePetId) || null; }
+function petRecords(sheet){ return state.data[sheet].filter(r=>String(r.petId)===String(state.activePetId)); }
+
+/* =========================================================================
+   HEADER — pet switcher
+   ========================================================================= */
+function renderHeader(){
+  const pet = activePet();
+  const photoEl = document.getElementById('headerPetPhoto');
+  const initialEl = document.getElementById('headerPetInitial');
+  const nameEl = document.getElementById('headerPetName');
+  if (pet){
+    nameEl.textContent = pet.name;
+    if (pet.photoUrl){
+      photoEl.src = pet.photoUrl; photoEl.style.display='block'; initialEl.style.display='none';
+    } else {
+      photoEl.style.display='none'; initialEl.style.display='flex';
+      initialEl.textContent = pet.name ? pet.name[0].toUpperCase() : '?';
+    }
+  } else {
+    nameEl.textContent = 'Pet ekle';
+    photoEl.style.display='none'; initialEl.style.display='flex'; initialEl.textContent='+';
+  }
+}
+
+document.getElementById('petSwitcher').addEventListener('click', openPetSwitcherModal);
+document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
+
+function openSettingsModal(){
+  openModal(`
+    <div class="p-5">
+      <div class="w-10 h-1.5 rounded-full bg-slate-200 mx-auto mb-4"></div>
+      <h3 class="font-extrabold text-lg mb-1" style="color:var(--navy);">Bağlantı Ayarları</h3>
+      <p class="text-sm mb-4" style="color:var(--navy-soft);">Google Apps Script Web App linkini test edip kaydedebilirsin.</p>
+      ${connectionSettingsFormHtml('settings')}
+
+      <div class="pt-4 mt-4" style="border-top:1px dashed var(--border);">
+        <h4 class="font-bold text-sm mb-1" style="color:var(--navy);">📧 Hatırlatma E-postaları</h4>
+        <p class="text-xs mb-3" style="color:var(--navy-soft);">Şu an kayıtlı adres: <b>${state.settings.reminderEmail || 'yok — Pet Düzenle ekranından ekle'}</b></p>
+        <div class="flex flex-col gap-2">
+          <button type="button" id="testEmailBtn" class="btn-ghost w-full py-3 text-sm">✉️ Test E-postası Gönder</button>
+          <button type="button" id="checkRemindersBtn" class="btn-ghost w-full py-3 text-sm">🔍 Hatırlatmaları Şimdi Kontrol Et</button>
+        </div>
+        <p class="text-[11px] mt-2" style="color:#94a3b8;">İkinci buton, 09:00'ı beklemeden bugün/yarına ait gerçek kayıtları tarar ve varsa e-posta gönderir — sistemin doğru çalıştığını hemen görebilirsin.</p>
+      </div>
+
+      <button type="button" onclick="closeModal()" class="btn-ghost w-full py-3 mt-4">Kapat</button>
+    </div>
+  `);
+  bindConnectionSettingsForm('settings', ()=>{ closeModal(); loadAll(); });
+
+  document.getElementById('testEmailBtn').addEventListener('click', async ()=>{
+    setLoading(true);
+    try{
+      const data = await apiAction('sendTestEmail', {});
+      showToast('Test e-postası gönderildi: ' + data.email, 'success');
+    } catch(err){
+      showToast('Gönderilemedi: ' + err.message, 'error');
+    } finally { setLoading(false); }
+  });
+
+  document.getElementById('checkRemindersBtn').addEventListener('click', async ()=>{
+    setLoading(true);
+    try{
+      const result = await apiAction('runReminderCheckNow', {});
+      if (result.reason === 'no-email'){
+        showToast('Önce Pet Düzenle ekranından bir hatırlatma e-postası kaydet.', 'error');
+      } else if (result.sent){
+        showToast(result.count + ' hatırlatma bulundu, e-posta gönderildi ✓', 'success');
+      } else {
+        showToast('Şu an gönderilecek hatırlatma yok (bugün/yarına ait kayıt bulunamadı).', 'info');
+      }
+    } catch(err){
+      showToast('Kontrol başarısız: ' + err.message, 'error');
+    } finally { setLoading(false); }
+  });
+}
+
+function openPetSwitcherModal(){
+  const rows = state.pets.map(p=>{
+    const meta = SPECIES_META[p.species] || SPECIES_META['Diğer'];
+    return `
+    <div class="w-full flex items-center gap-2 p-3 rounded-2xl mb-2" style="border:1px solid var(--border);">
+      <button class="flex items-center gap-3 flex-1 text-left pet-select-btn" data-id="${p.id}">
+        ${p.photoUrl ? `<img src="${p.photoUrl}" class="w-11 h-11 rounded-full object-cover">` : `<div class="w-11 h-11 rounded-full flex items-center justify-center text-lg" style="background:var(--blue-tint);">${meta.icon}</div>`}
+        <div class="flex-1">
+          <div class="font-bold text-sm" style="color:var(--navy);">${p.name}</div>
+          <div class="text-xs" style="color:var(--navy-soft);">${p.species || ''} ${p.breed ? '· '+p.breed : ''}</div>
+        </div>
+        ${String(p.id)===String(state.activePetId) ? `<span style="color:var(--blue);">✓</span>` : ''}
+      </button>
+      <button class="editPetBtn w-8 h-8 rounded-full flex items-center justify-center shrink-0" data-id="${p.id}" style="background:var(--blue-tint);" title="Düzenle">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" stroke="var(--blue)" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="deletePetBtn w-8 h-8 rounded-full flex items-center justify-center shrink-0" data-id="${p.id}" style="background:var(--danger-tint);" title="Sil">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V7h10Z" stroke="var(--danger)" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      </button>
+    </div>`;
+  }).join('');
+
+  openModal(`
+    <div class="p-5">
+      <div class="w-10 h-1.5 rounded-full bg-slate-200 mx-auto mb-4"></div>
+      <h3 class="font-extrabold text-lg mb-4" style="color:var(--navy);">Evcil Hayvanlarım</h3>
+      ${rows || `<p class="text-sm text-slate-500 mb-3">Henüz pet eklenmedi.</p>`}
+      <button id="openAddPetBtn" class="btn-primary w-full py-3 mt-2">+ Yeni Pet Ekle</button>
+    </div>
+  `);
+  document.querySelectorAll('.pet-select-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state.activePetId = btn.dataset.id;
+      closeModal(); renderHeader(); renderTab();
+    });
+  });
+  document.querySelectorAll('.editPetBtn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const pet = state.pets.find(p=>p.id===btn.dataset.id);
+      if (pet) openEditPetModal(pet);
+    });
+  });
+  document.querySelectorAll('.deletePetBtn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      deletePetConfirm(btn.dataset.id);
+    });
+  });
+  document.getElementById('openAddPetBtn').addEventListener('click', openAddPetModal);
+}
+
+function openAddPetModal(){
+  openModal(`
+    <form id="addPetForm" class="p-5">
+      <div class="w-10 h-1.5 rounded-full bg-slate-200 mx-auto mb-4"></div>
+      <h3 class="font-extrabold text-lg mb-4" style="color:var(--navy);">Yeni Pet Ekle</h3>
+
+      <div class="flex justify-center mb-4">
+        <label class="cursor-pointer">
+          <div id="photoPreviewWrap" class="w-20 h-20 rounded-full flex items-center justify-center overflow-hidden" style="background:var(--blue-tint); border:2px dashed #c7d7fb;">
+            <span class="text-2xl" id="photoPreviewIcon">📷</span>
+            <img id="photoPreviewImg" class="w-full h-full object-cover hidden">
+          </div>
+          <input type="file" id="petPhotoInput" accept="image/*" class="hidden">
+        </label>
+      </div>
+
+      <label class="label-sm">İsim *</label>
+      <input required name="name" class="input-field mb-3" placeholder="Örn. Boncuk">
+
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="label-sm">Tür</label>
+          <select name="species" class="input-field">
+            <option>Köpek</option><option>Kedi</option><option>Diğer</option>
+          </select>
+        </div>
+        <div>
+          <label class="label-sm">Cins</label>
+          <input name="breed" class="input-field" placeholder="Örn. Golden">
+        </div>
+      </div>
+
+      <label class="label-sm">Doğum Tarihi</label>
+      <input type="date" name="birthdate" class="input-field mb-3">
+
+      <label class="label-sm">Çip Numarası</label>
+      <input name="chipNumber" class="input-field mb-3" placeholder="Örn. 985 1120 xxxx xxxx" inputmode="numeric">
+
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="label-sm">Veteriner Adı</label>
+          <input name="vetName" class="input-field" placeholder="Dr. ...">
+        </div>
+        <div>
+          <label class="label-sm">Vet. Telefon</label>
+          <input name="vetPhone" class="input-field" placeholder="0 5xx ...">
+        </div>
+      </div>
+
+      <label class="label-sm">Notlar</label>
+      <textarea name="notes" class="input-field mb-4" rows="2" placeholder="Alerjiler, özel durumlar..."></textarea>
+
+      <div class="pt-3 mb-1" style="border-top:1px dashed var(--border);">
+        <label class="label-sm mt-3">📧 Hatırlatma E-postası</label>
+        <input type="email" name="reminderEmail" class="input-field" value="${state.settings.reminderEmail || ''}" placeholder="ornek@mail.com">
+        <p class="text-[11px] mt-1.5 mb-3" style="color:#94a3b8;">Tüm petler için ortak kullanılır — aşı, tedavi ve otel hatırlatma e-postaları bu adrese gönderilir.</p>
+      </div>
+
+      <div class="flex gap-3">
+        <button type="button" onclick="closeModal()" class="btn-ghost flex-1 py-3">Vazgeç</button>
+        <button type="submit" class="btn-primary flex-1 py-3">Kaydet</button>
+      </div>
+    </form>
+  `);
+
+  let photoData = '';
+  document.getElementById('photoPreviewWrap').addEventListener('click', ()=>document.getElementById('petPhotoInput').click());
+  document.getElementById('petPhotoInput').addEventListener('change', async (e)=>{
+    const file = e.target.files[0];
+    if (!file) return;
+    photoData = await resizeImageFile(file, 260);
+    document.getElementById('photoPreviewImg').src = photoData;
+    document.getElementById('photoPreviewImg').classList.remove('hidden');
+    document.getElementById('photoPreviewIcon').classList.add('hidden');
+  });
+
+  document.getElementById('addPetForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const payload = Object.fromEntries(fd.entries());
+    const reminderEmail = payload.reminderEmail;
+    delete payload.reminderEmail; // Pets tablosuna değil, ortak Settings tablosuna gider
+    payload.photoUrl = photoData;
+    setLoading(true);
+    try{
+      const created = await apiCreate('Pets', payload);
+      state.pets.push(created);
+      state.activePetId = created.id;
+      await saveReminderEmailIfChanged(reminderEmail);
+      closeModal();
+      renderHeader(); renderTab();
+      showToast('Pet başarıyla eklendi 🎉');
+    } catch(err){
+      showToast('Kaydedilemedi: ' + err.message, 'error');
+    } finally { setLoading(false); }
+  });
+}
+
+function openEditPetModal(pet){
+  openModal(`
+    <form id="editPetForm" class="p-5">
+      <div class="w-10 h-1.5 rounded-full bg-slate-200 mx-auto mb-4"></div>
+      <h3 class="font-extrabold text-lg mb-4" style="color:var(--navy);">Pet Bilgilerini Düzenle</h3>
+
+      <div class="flex justify-center mb-4">
+        <label class="cursor-pointer">
+          <div id="photoPreviewWrap" class="w-20 h-20 rounded-full flex items-center justify-center overflow-hidden" style="background:var(--blue-tint); border:2px dashed #c7d7fb;">
+            <span class="text-2xl" id="photoPreviewIcon" style="${pet.photoUrl ? 'display:none;' : ''}">📷</span>
+            <img id="photoPreviewImg" class="w-full h-full object-cover ${pet.photoUrl ? '' : 'hidden'}" src="${pet.photoUrl || ''}">
+          </div>
+          <input type="file" id="petPhotoInput" accept="image/*" class="hidden">
+        </label>
+      </div>
+
+      <label class="label-sm">İsim *</label>
+      <input required name="name" class="input-field mb-3" value="${pet.name || ''}" placeholder="Örn. Boncuk">
+
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="label-sm">Tür</label>
+          <select name="species" class="input-field">
+            <option ${pet.species==='Köpek'?'selected':''}>Köpek</option>
+            <option ${pet.species==='Kedi'?'selected':''}>Kedi</option>
+            <option ${pet.species==='Diğer'?'selected':''}>Diğer</option>
+          </select>
+        </div>
+        <div>
+          <label class="label-sm">Cins</label>
+          <input name="breed" class="input-field" value="${pet.breed || ''}" placeholder="Örn. Golden">
+        </div>
+      </div>
+
+      <label class="label-sm">Doğum Tarihi</label>
+      <input type="date" name="birthdate" class="input-field mb-3" value="${pet.birthdate ? String(pet.birthdate).slice(0,10) : ''}">
+
+      <label class="label-sm">Çip Numarası</label>
+      <input name="chipNumber" class="input-field mb-3" value="${pet.chipNumber || ''}" placeholder="Örn. 985 1120 xxxx xxxx" inputmode="numeric">
+
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="label-sm">Veteriner Adı</label>
+          <input name="vetName" class="input-field" value="${pet.vetName || ''}" placeholder="Dr. ...">
+        </div>
+        <div>
+          <label class="label-sm">Vet. Telefon</label>
+          <input name="vetPhone" class="input-field" value="${pet.vetPhone || ''}" placeholder="0 5xx ...">
+        </div>
+      </div>
+
+      <label class="label-sm">Notlar</label>
+      <textarea name="notes" class="input-field mb-4" rows="2" placeholder="Alerjiler, özel durumlar...">${pet.notes || ''}</textarea>
+
+      <div class="pt-3 mb-1" style="border-top:1px dashed var(--border);">
+        <label class="label-sm mt-3">📧 Hatırlatma E-postası</label>
+        <input type="email" name="reminderEmail" class="input-field" value="${state.settings.reminderEmail || ''}" placeholder="ornek@mail.com">
+        <p class="text-[11px] mt-1.5 mb-3" style="color:#94a3b8;">Tüm petler için ortak kullanılır — aşı, tedavi ve otel hatırlatma e-postaları bu adrese gönderilir.</p>
+      </div>
+
+      <div class="flex gap-3">
+        <button type="button" onclick="closeModal()" class="btn-ghost flex-1 py-3">Vazgeç</button>
+        <button type="submit" class="btn-primary flex-1 py-3">Güncelle</button>
+      </div>
+    </form>
+  `);
+
+  let photoData = pet.photoUrl || '';
+  document.getElementById('photoPreviewWrap').addEventListener('click', ()=>document.getElementById('petPhotoInput').click());
+  document.getElementById('petPhotoInput').addEventListener('change', async (e)=>{
+    const file = e.target.files[0];
+    if (!file) return;
+    photoData = await resizeImageFile(file, 260);
+    document.getElementById('photoPreviewImg').src = photoData;
+    document.getElementById('photoPreviewImg').classList.remove('hidden');
+    document.getElementById('photoPreviewIcon').classList.add('hidden');
+  });
+
+  document.getElementById('editPetForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const payload = Object.fromEntries(fd.entries());
+    const reminderEmail = payload.reminderEmail;
+    delete payload.reminderEmail; // Pets tablosuna değil, ortak Settings tablosuna gider
+    payload.photoUrl = photoData;
+    setLoading(true);
+    try{
+      const updated = await apiUpdate('Pets', pet.id, payload);
+      const idx = state.pets.findIndex(p=>p.id===pet.id);
+      if (idx > -1) state.pets[idx] = updated;
+      await saveReminderEmailIfChanged(reminderEmail);
+      closeModal();
+      renderHeader(); renderTab();
+      showToast('Pet bilgileri güncellendi ✓');
+    } catch(err){
+      showToast('Güncellenemedi: ' + err.message, 'error');
+    } finally { setLoading(false); }
+  });
+}
+
+async function deletePetConfirm(petId){
+  const pet = state.pets.find(p=>p.id===petId);
+  if (!pet) return;
+  const ok = confirm(`"${pet.name}" adlı peti ve buna bağlı TÜM sağlık, otel, finans ve beslenme kayıtlarını silmek istediğine emin misin? Bu işlem geri alınamaz.`);
+  if (!ok) return;
+
+  setLoading(true);
+  try{
+    // Bağlı kayıtları da temizle (aşı, ilaç, otel, harcama, beslenme günlüğü)
+    const relatedSheets = ['Vaccines', 'Medications', 'Boarding', 'Expenses', 'NutritionLog'];
+    for (const sheet of relatedSheets){
+      const related = state.data[sheet].filter(r=>String(r.petId)===String(petId));
+      for (const rec of related){
+        await apiDelete(sheet, rec.id);
+      }
+      state.data[sheet] = state.data[sheet].filter(r=>String(r.petId)!==String(petId));
+    }
+    await apiDelete('Pets', petId);
+    state.pets = state.pets.filter(p=>p.id!==petId);
+    if (state.activePetId === petId){
+      state.activePetId = state.pets[0] ? state.pets[0].id : null;
+    }
+    closeModal();
+    renderHeader(); renderTab();
+    showToast('Pet ve bağlı tüm kayıtlar silindi', 'info');
+  } catch(err){
+    showToast('Silinemedi: ' + err.message, 'error');
+  } finally { setLoading(false); }
+}
+document.getElementById('bottomNav').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.nav-item');
+  if (!btn) return;
+  state.activeTab = btn.dataset.tab;
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active', b===btn));
+  renderTab();
+});
+
+function renderTab(){
+  const content = document.getElementById('content');
+  if (!isConfigured()){
+    content.innerHTML = configWarningView();
+    bindConnectionSettingsForm('config', loadAll);
+    return;
+  }
+  if (!activePet() && state.activeTab !== 'dashboard'){
+    content.innerHTML = emptyStateView('Önce bir pet ekle', 'Sağlık, otel, finans ve beslenme verilerini takip edebilmek için önce sağ üstten bir evcil hayvan eklemelisin.', openAddPetModal);
+    return;
+  }
+  switch(state.activeTab){
+    case 'dashboard': content.innerHTML = renderDashboard(); afterDashboardRender(); break;
+    case 'medical': content.innerHTML = renderMedical(); afterMedicalRender(); break;
+    case 'hotel': content.innerHTML = renderHotel(); afterHotelRender(); break;
+    case 'finance': content.innerHTML = renderFinance(); afterFinanceRender(); break;
+    case 'nutrition': content.innerHTML = renderNutrition(); afterNutritionRender(); break;
+  }
+}
+
+function configWarningView(){
+  return `
+  <div class="fade-in mt-6 card p-5">
+    <div class="text-center mb-4">
+      <div class="text-3xl mb-2">⚙️</div>
+      <h3 class="font-extrabold mb-1" style="color:var(--navy);">Kurulum gerekiyor</h3>
+      <p class="text-sm" style="color:var(--navy-soft);">Google Apps Script'te "Dağıt > Web Uygulaması" ile aldığın linki aşağıya yapıştır.</p>
+    </div>
+    ${connectionSettingsFormHtml('config')}
+  </div>`;
+}
+
+/** URL input + Test Et / Kaydet formu — hem kurulum ekranında hem ayarlar modalında kullanılır. */
+function connectionSettingsFormHtml(prefix){
+  return `
+  <div id="${prefix}-wrap">
+    <label class="label-sm">Web App URL</label>
+    <input id="${prefix}-urlInput" class="input-field mb-2" placeholder="https://script.google.com/macros/s/.../exec" value="${CONFIG.API_URL || ''}">
+    <div id="${prefix}-status" class="text-xs mb-3" style="min-height:16px;"></div>
+    <div class="flex gap-3">
+      <button type="button" id="${prefix}-testBtn" class="btn-ghost flex-1 py-3">Test Et</button>
+      <button type="button" id="${prefix}-saveBtn" class="btn-primary flex-1 py-3">Kaydet</button>
+    </div>
+  </div>`;
+}
+
+function bindConnectionSettingsForm(prefix, onSaved){
+  const input = document.getElementById(`${prefix}-urlInput`);
+  const status = document.getElementById(`${prefix}-status`);
+  const testBtn = document.getElementById(`${prefix}-testBtn`);
+  const saveBtn = document.getElementById(`${prefix}-saveBtn`);
+
+  function setStatus(msg, ok){
+    status.textContent = msg;
+    status.style.color = ok ? 'var(--success)' : 'var(--danger)';
+  }
+
+  async function testUrl(url){
+    const res = await fetch(`${url}?action=listAll`);
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || 'Sunucu bir hata döndürdü');
+    return json;
+  }
+
+  testBtn.addEventListener('click', async ()=>{
+    const url = input.value.trim();
+    if (!url.startsWith('http')){ setStatus('Geçerli bir URL gir (https:// ile başlamalı).', false); return; }
+    setStatus('Test ediliyor...', true);
+    setLoading(true);
+    try{
+      await testUrl(url);
+      setStatus('✓ Bağlantı başarılı! Kaydedebilirsin.', true);
+    } catch(err){
+      setStatus('✕ Bağlanamadı: ' + err.message, false);
+    } finally { setLoading(false); }
+  });
+
+  saveBtn.addEventListener('click', async ()=>{
+    const url = input.value.trim();
+    if (!url.startsWith('http')){ setStatus('Geçerli bir URL gir (https:// ile başlamalı).', false); return; }
+    setLoading(true);
+    try{
+      await testUrl(url); // kaydetmeden önce doğrula
+      const persisted = saveStoredApiUrl(url);
+      CONFIG.API_URL = url;
+      setStatus(persisted ? '✓ Kaydedildi ve bağlanıldı.' : '✓ Bağlanıldı (bu oturum için; kalıcı kaydedilemedi).', true);
+      showToast('Bağlantı ayarları kaydedildi ✓');
+      if (onSaved) onSaved();
+    } catch(err){
+      setStatus('✕ Kaydedilemedi, önce bağlantıyı test et: ' + err.message, false);
+    } finally { setLoading(false); }
+  });
+}
+
+function emptyStateView(title, desc, onAction){
+  window.__emptyAction = onAction;
+  return `
+  <div class="fade-in mt-10 flex flex-col items-center text-center px-4">
+    <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4" style="background:var(--blue-tint);">🐾</div>
+    <h3 class="font-extrabold text-lg mb-1" style="color:var(--navy);">${title}</h3>
+    <p class="text-sm mb-5" style="color:var(--navy-soft);">${desc}</p>
+    <button onclick="window.__emptyAction && window.__emptyAction()" class="btn-primary px-6 py-3">+ Yeni Pet Ekle</button>
+  </div>`;
+}
+
+/* =========================================================================
+   DASHBOARD
+   ========================================================================= */
+function renderDashboard(){
+  const pet = activePet();
+  if (!pet){
+    return emptyStateView('PetCare HQ\'ya hoş geldin', 'Tüm bakım, sağlık ve harcama takibine başlamak için ilk evcil hayvanını ekle.', openAddPetModal);
+  }
+  const meta = SPECIES_META[pet.species] || SPECIES_META['Diğer'];
+  const vaccines = petRecords('Vaccines');
+  const upcomingVaccine = vaccines
+    .filter(v=>v.nextDate && !(v.completed === 'true' || v.completed === true))
+    .sort((a,b)=> new Date(a.nextDate)-new Date(b.nextDate))
+    .find(v=> daysUntil(v.nextDate) !== null);
+  const boarding = petRecords('Boarding')
+    .filter(b=>b.checkIn && daysUntil(b.checkIn) >= 0)
+    .sort((a,b)=> new Date(a.checkIn)-new Date(b.checkIn))[0];
+  const expenses = petRecords('Expenses');
+  const now = new Date();
+  const monthExpenses = expenses.filter(x=>{
+    const d = new Date(x.date); return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
+  });
+  const netByCurrency = {};
+  monthExpenses.forEach(x=>{
+    const code = x.currency || DEFAULT_CURRENCY;
+    const net = (Number(x.amount)||0) - (Number(x.refundAmount)||0);
+    netByCurrency[code] = (netByCurrency[code]||0) + net;
+  });
+  const netMonthDisplay = Object.keys(netByCurrency).length
+    ? Object.keys(netByCurrency).map(code=> fmtMoney(netByCurrency[code], code)).join(' · ')
+    : fmtMoney(0);
+  const lastStock = petRecords('NutritionLog').filter(n=>n.logType==='stock').sort((a,b)=> new Date(b.date)-new Date(a.date))[0];
+  const stockProgress = lastStock ? computeStockProgress(lastStock) : null;
+
+  return `
+  <div class="fade-in space-y-4">
+    <div class="card p-5">
+      <div class="flex items-center gap-4">
+        ${pet.photoUrl ? `<img src="${pet.photoUrl}" class="w-16 h-16 rounded-2xl object-cover">` : `<div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl" style="background:var(--blue-tint);">${meta.icon}</div>`}
+        <div class="flex-1">
+          <h2 class="font-extrabold text-xl" style="color:var(--navy);">${pet.name}</h2>
+          <p class="text-sm" style="color:var(--navy-soft);">${pet.species || '—'}${pet.breed ? ' · '+pet.breed : ''}</p>
+          ${pet.birthdate ? `<p class="text-xs mt-0.5" style="color:#94a3b8;">Doğum: ${fmtDate(pet.birthdate)}</p>` : ''}
+          ${pet.chipNumber ? `<p class="text-xs mt-0.5" style="color:#94a3b8;">Çip No: ${pet.chipNumber}</p>` : ''}
+        </div>
+        <button id="dashEditPetBtn" class="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style="background:var(--blue-tint);" title="Düzenle">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" stroke="var(--blue)" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      ${pet.notes ? `<p class="text-xs mt-3 p-2 rounded-xl" style="background:var(--bg); color:var(--navy-soft);">📝 ${pet.notes}</p>` : ''}
+    </div>
+
+    ${(pet.vetName || pet.vetPhone) ? `
+    <div class="card p-4 flex items-center justify-between" style="border-color:#fecaca; background:var(--danger-tint);">
+      <div>
+        <div class="text-xs font-bold" style="color:var(--danger);">🚨 ACİL VETERİNER</div>
+        <div class="text-sm font-semibold mt-0.5" style="color:var(--navy);">${pet.vetName || 'Veteriner'}</div>
+      </div>
+      ${pet.vetPhone ? `<a href="tel:${pet.vetPhone}" class="btn-primary px-4 py-2 text-sm" style="background:var(--danger);">${pet.vetPhone}</a>` : ''}
+    </div>` : ''}
+
+    <div class="grid grid-cols-2 gap-3">
+      <div class="card p-4">
+        <div class="text-xs font-semibold mb-1" style="color:var(--navy-soft);">💉 Sıradaki Aşı</div>
+        ${upcomingVaccine ? `
+          <div class="font-bold text-sm" style="color:var(--navy);">${upcomingVaccine.name}</div>
+          <div class="text-xs mt-1" style="color:${daysUntil(upcomingVaccine.nextDate)<=7 ? 'var(--danger)':'var(--navy-soft)'};">${fmtDate(upcomingVaccine.nextDate)} · ${daysLabelText(daysUntil(upcomingVaccine.nextDate))}</div>
+        ` : `<div class="text-xs" style="color:#94a3b8;">Planlanmış aşı yok</div>`}
+      </div>
+      <div class="card p-4">
+        <div class="text-xs font-semibold mb-1" style="color:var(--navy-soft);">🏨 Sıradaki Otel</div>
+        ${boarding ? `
+          <div class="font-bold text-sm" style="color:var(--navy);">${boarding.hotelName}</div>
+          <div class="text-xs mt-1" style="color:${daysUntil(boarding.checkIn)<=7 ? 'var(--danger)':'var(--navy-soft)'};">${fmtDate(boarding.checkIn)} · ${daysLabelText(daysUntil(boarding.checkIn))}</div>
+        ` : `<div class="text-xs" style="color:#94a3b8;">Rezervasyon yok</div>`}
+      </div>
+      <div class="card p-4 col-span-2">
+        <div class="text-xs font-semibold mb-1" style="color:var(--navy-soft);">💰 Bu Ay Net Harcama</div>
+        <div class="font-bold text-sm" style="color:var(--navy);">${netMonthDisplay}</div>
+      </div>
+    </div>
+
+    <div class="card p-4">
+      <div class="text-xs font-semibold mb-1" style="color:var(--navy-soft);">🥣 Mama Stoku</div>
+      ${lastStock ? `
+        <div class="font-bold text-sm" style="color:var(--navy);">${lastStock.title}</div>
+        ${stockProgressBarHtml(stockProgress)}
+      ` : `<div class="text-xs" style="color:#94a3b8;">Kayıt yok — Beslenme sekmesinden mama stoku ekleyebilirsin</div>`}
+    </div>
+
+    <button id="addPetFromDash" class="btn-ghost w-full py-3 text-sm">+ Yeni Pet Ekle</button>
+  </div>`;
+}
+function afterDashboardRender(){
+  const btn = document.getElementById('addPetFromDash');
+  if (btn) btn.addEventListener('click', openAddPetModal);
+  const editBtn = document.getElementById('dashEditPetBtn');
+  if (editBtn) editBtn.addEventListener('click', ()=> openEditPetModal(activePet()));
+}
+
+/* =========================================================================
+   MEDICAL HUB (Vaccines + Medications sub-tabs)
+   ========================================================================= */
+function renderMedical(){
+  const isVac = state.medicalSubTab === 'vaccines';
+  const records = isVac ? petRecords('Vaccines') : petRecords('Medications');
+
+  return `
+  <div class="fade-in">
+    <div class="flex gap-2 mb-4">
+      <button class="chip ${isVac?'active':''}" id="subVaccines" style="flex:1;">💉 Aşı & Parazit</button>
+      <button class="chip ${!isVac?'active':''}" id="subMeds" style="flex:1;">💊 İlaç & Tedavi</button>
+    </div>
+
+    <input id="medicalSearch" class="input-field mb-3" placeholder="🔍 Ara...">
+
+    <div id="medicalList" class="space-y-3">
+      ${records.length ? records.map(r=> isVac ? vaccineCard(r) : medicationCard(r)).join('') : emptyMini(isVac ? 'Henüz aşı/parazit kaydı yok' : 'Henüz ilaç kaydı yok')}
+    </div>
+
+    <button id="addMedicalBtn" class="btn-primary w-full py-3 mt-4 fab">+ Yeni Kayıt Ekle</button>
+  </div>`;
+}
+function vaccineCard(r){
+  const isDone = r.completed === 'true' || r.completed === true;
+  const rawD = daysUntil(r.nextDate);
+  const d = isDone ? 0 : rawD; // tik atılınca sayaç donar, gerçek gecikme artık gösterilmez
+  const urgent = !isDone && d !== null && d <= 7;
+  const nextLabel = isDone ? 'Tamamlandı' : daysLabelText(d);
+  return `
+  <div class="card p-4 ${isDone?'opacity-60':''}">
+    <div class="flex justify-between items-start">
+      <div class="flex-1">
+        <span class="chip" style="padding:3px 10px; font-size:11px; background:var(--blue-tint); color:var(--blue); border:none;">${r.category || 'Aşı'}</span>
+        <div class="vac-strike font-bold text-sm mt-1.5 ${isDone?'line-through':''}" style="color:${isDone?'#94a3b8':'var(--navy)'};">${r.name}</div>
+        <div class="vac-strike text-xs mt-1 ${isDone?'line-through':''}" style="color:var(--navy-soft);">Yapılış: ${fmtDate(r.date)}</div>
+        ${r.nextDate ? `<div class="vac-strike text-xs mt-0.5 font-semibold ${isDone?'line-through':''}" style="color:${isDone ? '#94a3b8' : (urgent?'var(--danger)':'var(--success)')};">Sonraki: ${fmtDate(r.nextDate)} · ${nextLabel}</div>` : ''}
+        ${r.notes ? `<div class="text-xs mt-1" style="color:#94a3b8;">${r.notes}</div>` : ''}
+      </div>
+      <div class="flex flex-col items-end gap-2 shrink-0">
+        <input type="checkbox" class="vaccine-check w-5 h-5 accent-blue-600" data-id="${r.id}" ${isDone?'checked':''} title="Yapıldı olarak işaretle">
+        <button class="delBtn text-xs" data-sheet="Vaccines" data-id="${r.id}" style="color:var(--danger);">Sil</button>
+      </div>
+    </div>
+  </div>`;
+}
+function medicationCard(r){
+  const hasRange = r.startDate && r.endDate;
+  const totalDays = hasRange ? daysCountInclusive(r.startDate, r.endDate) : 1;
+  const multiDay = hasRange && totalDays > 1;
+  const isDone = r.completed === 'true' || r.completed === true;
+  const doneCount = multiDay ? parseJsonArraySafe(r.completedDates).length : 0;
+  const multiDayFullyDone = multiDay && doneCount === totalDays;
+  const nameStruck = (!multiDay && isDone) || multiDayFullyDone;
+
+  const rightControl = multiDay
+    ? `<div class="flex items-center gap-1.5 cursor-pointer" onclick="toggleMedAccordion('${r.id}')">
+         <span id="med-progress-${r.id}" class="text-[11px] font-semibold" style="color:${multiDayFullyDone?'var(--success)':'var(--navy-soft)'};">${doneCount}/${totalDays}</span>
+         <svg id="chevron-${r.id}" width="16" height="16" viewBox="0 0 24 24" fill="none" style="transition:transform .2s;"><path d="M6 9l6 6 6-6" stroke="#334155" stroke-width="2" stroke-linecap="round"/></svg>
+       </div>`
+    : `<input type="checkbox" class="single-med-check w-5 h-5 accent-blue-600" data-id="${r.id}" ${isDone?'checked':''} title="Yapıldı olarak işaretle">`;
+
+  return `
+  <div class="card p-4 ${((!multiDay && isDone) || multiDayFullyDone)?'opacity-60':''}">
+    <div class="flex justify-between items-start">
+      <div class="flex-1 ${multiDay?'cursor-pointer':''}" ${multiDay?`onclick="toggleMedAccordion('${r.id}')"`:''}>
+        <div id="med-name-${r.id}" class="font-bold text-sm ${nameStruck?'line-through':''}" style="color:${nameStruck?'#94a3b8':'var(--navy)'};">${r.name}</div>
+        <div class="text-xs mt-1" style="color:var(--navy-soft);">${r.dosage || ''} ${r.frequency ? '· '+r.frequency : ''}</div>
+        <div class="text-xs mt-0.5" style="color:#94a3b8;">${fmtDate(r.startDate)} → ${r.endDate ? fmtDate(r.endDate) : 'devam ediyor'} ${multiDay?' · dokun, gün gün aç':''}</div>
+        ${r.notes ? `<div class="text-xs mt-1" style="color:#94a3b8;">${r.notes}</div>` : ''}
+      </div>
+      <div class="flex flex-col items-end gap-2 shrink-0">
+        ${rightControl}
+        <button class="delBtn text-xs" data-sheet="Medications" data-id="${r.id}" style="color:var(--danger);">Sil</button>
+      </div>
+    </div>
+    ${multiDay ? `<div id="med-days-${r.id}" class="hidden mt-3 pt-3" style="border-top:1px dashed var(--border);">${buildMedicationDayRows(r)}</div>` : ''}
+  </div>`;
+}
+function emptyMini(text){
+  return `<div class="text-center py-8 text-sm" style="color:#94a3b8;">${text}</div>`;
+}
+
+function afterMedicalRender(){
+  document.getElementById('subVaccines').addEventListener('click', ()=>{ state.medicalSubTab='vaccines'; renderTab(); });
+  document.getElementById('subMeds').addEventListener('click', ()=>{ state.medicalSubTab='medications'; renderTab(); });
+  document.getElementById('addMedicalBtn').addEventListener('click', ()=> state.medicalSubTab==='vaccines' ? openVaccineForm() : openMedicationForm());
+  bindDeleteButtons();
+  bindSearch('medicalSearch', '#medicalList .card', ['.font-bold']);
+  bindCompletionCheckboxes();
+}
+
+/** Aşı/tedavi "yapıldı" tikleri ve ilaç gün-gün akordion checkbox'ları. */
+function bindCompletionCheckboxes(){
+  document.querySelectorAll('.vaccine-check').forEach(cb=>{
+    cb.addEventListener('click', e=> e.stopPropagation());
+    cb.addEventListener('change', async ()=>{
+      const id = cb.dataset.id;
+      setLoading(true);
+      try{
+        const updated = await apiUpdate('Vaccines', id, { completed: cb.checked });
+        const idx = state.data.Vaccines.findIndex(v=>v.id===id);
+        if (idx>-1) state.data.Vaccines[idx] = updated;
+        renderTab(); // metni de (Tamamlandı / gecikme) doğru göstermek için tam yeniden çiz
+      } catch(err){
+        cb.checked = !cb.checked;
+        showToast('Güncellenemedi: ' + err.message, 'error');
+      } finally { setLoading(false); }
+    });
+  });
+
+  document.querySelectorAll('.single-med-check').forEach(cb=>{
+    cb.addEventListener('click', e=> e.stopPropagation());
+    cb.addEventListener('change', async ()=>{
+      const id = cb.dataset.id;
+      const card = cb.closest('.card');
+      setLoading(true);
+      try{
+        const updated = await apiUpdate('Medications', id, { completed: cb.checked });
+        const idx = state.data.Medications.findIndex(m=>m.id===id);
+        if (idx>-1) state.data.Medications[idx] = updated;
+        card.classList.toggle('opacity-60', cb.checked);
+        const nameEl = document.getElementById('med-name-'+id);
+        if (nameEl){
+          nameEl.classList.toggle('line-through', cb.checked);
+          nameEl.style.color = cb.checked ? '#94a3b8' : 'var(--navy)';
+        }
+      } catch(err){
+        cb.checked = !cb.checked;
+        showToast('Güncellenemedi: ' + err.message, 'error');
+      } finally { setLoading(false); }
+    });
+  });
+
+  document.querySelectorAll('.med-day-check').forEach(cb=>{
+    cb.addEventListener('click', e=> e.stopPropagation());
+    cb.addEventListener('change', async ()=>{
+      const medId = cb.dataset.medId;
+      const date = cb.dataset.date;
+      const rec = state.data.Medications.find(m=>m.id===medId);
+      if (!rec) return;
+      let arr = parseJsonArraySafe(rec.completedDates);
+      if (cb.checked){ if (!arr.includes(date)) arr.push(date); }
+      else { arr = arr.filter(d=>d!==date); }
+      const newVal = JSON.stringify(arr);
+      setLoading(true);
+      try{
+        const updated = await apiUpdate('Medications', medId, { completedDates: newVal });
+        const idx = state.data.Medications.findIndex(m=>m.id===medId);
+        if (idx>-1) state.data.Medications[idx] = updated;
+        const totalDays = daysCountInclusive(rec.startDate, rec.endDate);
+        const fullyDone = arr.length === totalDays;
+        const badge = document.getElementById('med-progress-'+medId);
+        if (badge){
+          badge.textContent = arr.length + '/' + totalDays;
+          badge.style.color = fullyDone ? 'var(--success)' : 'var(--navy-soft)';
+        }
+        const nameEl = document.getElementById('med-name-'+medId);
+        if (nameEl){
+          nameEl.classList.toggle('line-through', fullyDone);
+          nameEl.style.color = fullyDone ? '#94a3b8' : 'var(--navy)';
+        }
+        const card = cb.closest('.card');
+        if (card) card.classList.toggle('opacity-60', fullyDone);
+        const label = cb.closest('label');
+        if (label){
+          const span = label.querySelector('span');
+          span.classList.toggle('line-through', cb.checked);
+          span.style.color = cb.checked ? '#94a3b8' : 'var(--navy)';
+        }
+      } catch(err){
+        cb.checked = !cb.checked;
+        showToast('Güncellenemedi: ' + err.message, 'error');
+      } finally { setLoading(false); }
+    });
+  });
+}
+
+function openVaccineForm(){
+  openModal(`
+  <form id="vacForm" class="p-5">
+    <div class="w-10 h-1.5 rounded-full bg-slate-200 mx-auto mb-4"></div>
+    <h3 class="font-extrabold text-lg mb-4" style="color:var(--navy);">Aşı / Parazit Kaydı</h3>
+    <label class="label-sm">Kategori</label>
+    <select name="category" class="input-field mb-3">
+      <option>Kuduz</option><option>Karma</option><option>İç Parazit</option><option>Dış Parazit</option><option>Diğer</option>
+    </select>
+    <label class="label-sm">Aşı / İlaç Adı *</label>
+    <input required name="name" class="input-field mb-3" placeholder="Örn. Nobivac Rabies">
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div><label class="label-sm">Yapıldığı Tarih</label><input type="date" name="date" class="input-field"></div>
+      <div><label class="label-sm">Sonraki Hatırlatma</label><input type="date" name="nextDate" class="input-field"></div>
+    </div>
+    <label class="label-sm">Notlar</label>
+    <textarea name="notes" class="input-field mb-4" rows="2"></textarea>
+    <div class="flex gap-3">
+      <button type="button" onclick="closeModal()" class="btn-ghost flex-1 py-3">Vazgeç</button>
+      <button type="submit" class="btn-primary flex-1 py-3">Kaydet</button>
+    </div>
+  </form>`);
+  document.getElementById('vacForm').addEventListener('submit', (e)=> submitRecordForm(e, 'Vaccines'));
+}
+function openMedicationForm(){
+  openModal(`
+  <form id="medForm" class="p-5">
+    <div class="w-10 h-1.5 rounded-full bg-slate-200 mx-auto mb-4"></div>
+    <h3 class="font-extrabold text-lg mb-4" style="color:var(--navy);">İlaç / Tedavi Kaydı</h3>
+    <label class="label-sm">İlaç Adı *</label>
+    <input required name="name" class="input-field mb-3" placeholder="Örn. Apoquel">
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div><label class="label-sm">Dozaj</label><input name="dosage" class="input-field" placeholder="5mg"></div>
+      <div><label class="label-sm">Sıklık</label><input name="frequency" class="input-field" placeholder="Günde 1"></div>
+    </div>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div><label class="label-sm">Başlangıç</label><input type="date" name="startDate" class="input-field"></div>
+      <div><label class="label-sm">Bitiş</label><input type="date" name="endDate" class="input-field"></div>
+    </div>
+    <label class="label-sm">Notlar</label>
+    <textarea name="notes" class="input-field mb-4" rows="2"></textarea>
+    <div class="flex gap-3">
+      <button type="button" onclick="closeModal()" class="btn-ghost flex-1 py-3">Vazgeç</button>
+      <button type="submit" class="btn-primary flex-1 py-3">Kaydet</button>
+    </div>
+  </form>`);
+  document.getElementById('medForm').addEventListener('submit', (e)=> submitRecordForm(e, 'Medications'));
+}
+
+/* =========================================================================
+   HOTEL / BOARDING
+   ========================================================================= */
+function renderHotel(){
+  const records = petRecords('Boarding').sort((a,b)=> new Date(b.checkIn)-new Date(a.checkIn));
+  const nextBoarding = petRecords('Boarding')
+    .filter(b=>b.checkIn && daysUntil(b.checkIn) >= 0)
+    .sort((a,b)=> new Date(a.checkIn)-new Date(b.checkIn))[0];
+  return `
+  <div class="fade-in">
+    <div class="card p-4 mb-4">
+      <div class="text-xs font-semibold mb-1" style="color:var(--navy-soft);">🏨 Sıradaki Otel</div>
+      ${nextBoarding ? `
+        <div class="font-bold text-sm" style="color:var(--navy);">${nextBoarding.hotelName}</div>
+        <div class="text-xs mt-1" style="color:${daysUntil(nextBoarding.checkIn)<=7 ? 'var(--danger)':'var(--navy-soft)'};">${fmtDate(nextBoarding.checkIn)} · ${daysLabelText(daysUntil(nextBoarding.checkIn))}</div>
+      ` : `<div class="text-xs" style="color:#94a3b8;">Yaklaşan rezervasyon yok</div>`}
+    </div>
+    <input id="hotelSearch" class="input-field mb-3" placeholder="🔍 Otel adına göre ara...">
+    <div id="hotelList" class="space-y-3">
+      ${records.length ? records.map(hotelCard).join('') : emptyMini('Henüz rezervasyon yok')}
+    </div>
+    <button id="addHotelBtn" class="btn-primary w-full py-3 mt-4 fab">+ Rezervasyon Ekle</button>
+  </div>`;
+}
+function hotelCard(r){
+  const d = daysUntil(r.checkIn);
+  const isUpcoming = d !== null && d >= 0; // günü geçmişse geri sayım gösterilmez, otomatik kalkar
+  return `
+  <div class="card p-4">
+    <div class="flex justify-between items-start">
+      <div class="flex-1">
+        <div class="font-bold text-sm" style="color:var(--navy);">${r.hotelName}</div>
+        <div class="text-xs mt-1" style="color:${isUpcoming && d<=7 ? 'var(--danger)':'var(--navy-soft)'};">${fmtDate(r.checkIn)} → ${fmtDate(r.checkOut)}${isUpcoming ? ' · ' + daysLabelText(d) : ''}</div>
+        ${r.cost ? `<div class="text-xs mt-0.5 font-semibold" style="color:var(--blue);">${fmtMoney(r.cost, r.currency)}</div>` : ''}
+        ${r.careInstructions ? `<div class="text-xs mt-2 p-2 rounded-lg" style="background:var(--bg); color:var(--navy-soft);">🗒️ ${r.careInstructions}</div>` : ''}
+      </div>
+      <button class="delBtn text-xs" data-sheet="Boarding" data-id="${r.id}" style="color:var(--danger);">Sil</button>
+    </div>
+  </div>`;
+}
+function afterHotelRender(){
+  document.getElementById('addHotelBtn').addEventListener('click', openHotelForm);
+  bindDeleteButtons();
+  bindSearch('hotelSearch', '#hotelList .card', ['.font-bold']);
+}
+function openHotelForm(){
+  openModal(`
+  <form id="hotelForm" class="p-5">
+    <div class="w-10 h-1.5 rounded-full bg-slate-200 mx-auto mb-4"></div>
+    <h3 class="font-extrabold text-lg mb-4" style="color:var(--navy);">Otel Rezervasyonu</h3>
+    <label class="label-sm">Otel Adı *</label>
+    <input required name="hotelName" class="input-field mb-3" placeholder="Örn. Patili Konak">
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div><label class="label-sm">Giriş</label><input type="date" name="checkIn" class="input-field"></div>
+      <div><label class="label-sm">Çıkış</label><input type="date" name="checkOut" class="input-field"></div>
+    </div>
+    <label class="label-sm">Ücret</label>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <input type="number" step="0.01" name="cost" class="input-field" placeholder="0.00">
+      <select name="currency" class="input-field">${currencyOptionsHtml(DEFAULT_CURRENCY)}</select>
+    </div>
+    <label class="label-sm">Özel Bakım Talimatları</label>
+    <textarea name="careInstructions" class="input-field mb-4" rows="3" placeholder="Beslenme saatleri, ilaç kullanımı, huy özellikleri..."></textarea>
+    <div class="flex gap-3">
+      <button type="button" onclick="closeModal()" class="btn-ghost flex-1 py-3">Vazgeç</button>
+      <button type="submit" class="btn-primary flex-1 py-3">Kaydet</button>
+    </div>
+  </form>`);
+  document.getElementById('hotelForm').addEventListener('submit', (e)=> submitRecordForm(e, 'Boarding'));
+}
+
+/* =========================================================================
+   FINANCE
+   ========================================================================= */
+function renderFinance(){
+  const records = petRecords('Expenses').sort((a,b)=> new Date(b.date)-new Date(a.date));
+  const grossDisplay = fmtGroupedTotals(records, 'amount');
+  const refundDisplay = fmtGroupedTotals(records, 'refundAmount');
+  const netByCurrency = {};
+  records.forEach(r=>{
+    const code = r.currency || DEFAULT_CURRENCY;
+    const net = (Number(r.amount)||0) - (Number(r.refundAmount)||0);
+    netByCurrency[code] = (netByCurrency[code]||0) + net;
+  });
+  const netDisplay = Object.keys(netByCurrency).length
+    ? Object.keys(netByCurrency).map(code=> fmtMoney(netByCurrency[code], code)).join(' · ')
+    : fmtMoney(0);
+  return `
+  <div class="fade-in">
+    <div class="card p-4 mb-4" style="background:var(--navy);">
+      <div class="text-xs font-semibold text-white/70">Toplam Net Harcama</div>
+      <div class="text-2xl font-extrabold text-white mt-1">${netDisplay}</div>
+      <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-white/70">
+        <span>Brüt: ${grossDisplay}</span>
+        <span>Sigorta İadesi: ${refundDisplay}</span>
+      </div>
+      <div class="text-[11px] text-white/50 mt-2">Farklı para birimleri ayrı ayrı toplanır, birbirine çevrilmez.</div>
+    </div>
+    <input id="financeSearch" class="input-field mb-3" placeholder="🔍 Kategoriye göre ara...">
+    <div id="financeList" class="space-y-3">
+      ${records.length ? records.map(expenseCard).join('') : emptyMini('Henüz harcama kaydı yok')}
+    </div>
+    <button id="addExpenseBtn" class="btn-primary w-full py-3 mt-4 fab">+ Harcama Ekle</button>
+  </div>`;
+}
+function expenseCard(r){
+  const net = (Number(r.amount)||0) - (Number(r.refundAmount)||0);
+  const claimed = String(r.insuranceClaim).toLowerCase() === 'true' || r.insuranceClaim === true;
+  return `
+  <div class="card p-4">
+    <div class="flex justify-between items-start">
+      <div class="flex-1">
+        <span class="chip" style="padding:3px 10px; font-size:11px; background:var(--blue-tint); color:var(--blue); border:none;">${r.category || 'Diğer'}</span>
+        <div class="text-xs mt-1.5" style="color:var(--navy-soft);">${fmtDate(r.date)}</div>
+        <div class="font-bold text-base mt-0.5" style="color:var(--navy);">${fmtMoney(r.amount, r.currency)}</div>
+        ${claimed ? `
+          <div class="text-xs mt-1 font-semibold" style="color:var(--success);">✓ Sigorta iadesi: ${fmtMoney(r.refundAmount, r.currency)}</div>
+          <div class="text-xs" style="color:#94a3b8;">Net: ${fmtMoney(net, r.currency)}</div>
+        ` : `<div class="text-xs mt-1" style="color:#94a3b8;">Sigorta iadesi talep edilmedi</div>`}
+        ${r.notes ? `<div class="text-xs mt-1" style="color:#94a3b8;">${r.notes}</div>` : ''}
+      </div>
+      <button class="delBtn text-xs" data-sheet="Expenses" data-id="${r.id}" style="color:var(--danger);">Sil</button>
+    </div>
+  </div>`;
+}
+function afterFinanceRender(){
+  document.getElementById('addExpenseBtn').addEventListener('click', openExpenseForm);
+  bindDeleteButtons();
+  bindSearch('financeSearch', '#financeList .card', ['.chip']);
+}
+function openExpenseForm(){
+  openModal(`
+  <form id="expForm" class="p-5">
+    <div class="w-10 h-1.5 rounded-full bg-slate-200 mx-auto mb-4"></div>
+    <h3 class="font-extrabold text-lg mb-4" style="color:var(--navy);">Harcama Ekle</h3>
+    <label class="label-sm">Kategori</label>
+    <select name="category" class="input-field mb-3">
+      <option>Veteriner</option><option>Mama</option><option>Otel</option><option>Aksesuar</option><option>Bakım</option><option>Diğer</option>
+    </select>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div><label class="label-sm">Tutar *</label><input required type="number" step="0.01" name="amount" class="input-field"></div>
+      <div><label class="label-sm">Para Birimi</label><select name="currency" class="input-field">${currencyOptionsHtml(DEFAULT_CURRENCY)}</select></div>
+    </div>
+    <label class="label-sm">Tarih</label>
+    <input type="date" name="date" class="input-field mb-3">
+
+    <div class="flex items-center justify-between p-3 rounded-xl mb-3" style="background:var(--bg);">
+      <span class="text-sm font-semibold" style="color:var(--navy);">Sigorta İade Talebi Yapıldı mı?</span>
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" id="claimCheckbox" name="insuranceClaim" class="w-5 h-5 accent-blue-600">
+      </label>
+    </div>
+    <div id="refundWrap" class="hidden mb-3">
+      <label class="label-sm">İade Tutarı</label>
+      <input type="number" step="0.01" name="refundAmount" class="input-field" placeholder="0.00">
+    </div>
+
+    <label class="label-sm">Notlar</label>
+    <textarea name="notes" class="input-field mb-4" rows="2"></textarea>
+    <div class="flex gap-3">
+      <button type="button" onclick="closeModal()" class="btn-ghost flex-1 py-3">Vazgeç</button>
+      <button type="submit" class="btn-primary flex-1 py-3">Kaydet</button>
+    </div>
+  </form>`);
+  document.getElementById('claimCheckbox').addEventListener('change', (e)=>{
+    document.getElementById('refundWrap').classList.toggle('hidden', !e.target.checked);
+  });
+  document.getElementById('expForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const payload = Object.fromEntries(fd.entries());
+    payload.insuranceClaim = document.getElementById('claimCheckbox').checked;
+    payload.refundAmount = payload.insuranceClaim ? (payload.refundAmount || 0) : 0;
+    saveRecord('Expenses', payload);
+  });
+}
+
+/* =========================================================================
+   NUTRITION & DAILY LOG
+   ========================================================================= */
+const NUTRITION_FILTERS = [
+  { key:'all', label:'Tümü' },
+  { key:'diet', label:'🥩 Diyet' },
+  { key:'stock', label:'📦 Stok' },
+  { key:'care', label:'✂️ Bakım' },
+  { key:'observation', label:'👁️ Gözlem' }
+];
+function renderNutrition(){
+  const all = petRecords('NutritionLog').sort((a,b)=> new Date(b.date)-new Date(a.date));
+  const records = state.nutritionFilter === 'all' ? all : all.filter(r=>r.logType===state.nutritionFilter);
+  return `
+  <div class="fade-in">
+    <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
+      ${NUTRITION_FILTERS.map(f=>`<button class="chip nutriFilter ${state.nutritionFilter===f.key?'active':''}" data-key="${f.key}">${f.label}</button>`).join('')}
+    </div>
+    <div id="nutritionList" class="space-y-3">
+      ${records.length ? records.map(nutritionCard).join('') : emptyMini('Kayıt bulunamadı')}
+    </div>
+    <button id="addNutritionBtn" class="btn-primary w-full py-3 mt-4 fab">+ Kayıt Ekle</button>
+  </div>`;
+}
+const LOGTYPE_META = {
+  diet: { label:'Diyet', color:'var(--blue)', tint:'var(--blue-tint)' },
+  stock: { label:'Stok', color:'var(--amber)', tint:'var(--amber-tint)' },
+  care: { label:'Bakım', color:'var(--success)', tint:'var(--success-tint)' },
+  observation: { label:'Gözlem', color:'var(--navy-soft)', tint:'var(--bg)' }
+};
+function nutritionCard(r){
+  const meta = LOGTYPE_META[r.logType] || LOGTYPE_META.observation;
+  const progress = r.logType === 'stock' ? computeStockProgress(r) : null;
+  return `
+  <div class="card p-4">
+    <div class="flex justify-between items-start">
+      <div class="flex-1">
+        <span class="chip" style="padding:3px 10px; font-size:11px; background:${meta.tint}; color:${meta.color}; border:none;">${meta.label}</span>
+        <div class="font-bold text-sm mt-1.5" style="color:var(--navy);">${r.title}</div>
+        ${r.detail ? `<div class="text-xs mt-1" style="color:var(--navy-soft);">${r.detail}</div>` : ''}
+        <div class="text-xs mt-1" style="color:#94a3b8;">${fmtDate(r.date)}</div>
+        ${r.logType === 'stock' ? stockProgressBarHtml(progress) : ''}
+      </div>
+      <button class="delBtn text-xs" data-sheet="NutritionLog" data-id="${r.id}" style="color:var(--danger);">Sil</button>
+    </div>
+  </div>`;
+}
+function afterNutritionRender(){
+  document.querySelectorAll('.nutriFilter').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ state.nutritionFilter = btn.dataset.key; renderTab(); });
+  });
+  document.getElementById('addNutritionBtn').addEventListener('click', openNutritionForm);
+  bindDeleteButtons();
+}
+function openNutritionForm(){
+  openModal(`
+  <form id="nutriForm" class="p-5">
+    <div class="w-10 h-1.5 rounded-full bg-slate-200 mx-auto mb-4"></div>
+    <h3 class="font-extrabold text-lg mb-4" style="color:var(--navy);">Beslenme / Rutin Kaydı</h3>
+    <label class="label-sm">Tür</label>
+    <select name="logType" id="nutriLogType" class="input-field mb-3">
+      <option value="diet">🥩 Mama / Diyet Bilgisi</option>
+      <option value="stock">📦 Mama Stok Durumu</option>
+      <option value="care">✂️ Bakım (Tırnak, Banyo vb.)</option>
+      <option value="observation">👁️ Günlük Gözlem</option>
+    </select>
+    <label class="label-sm">Başlık *</label>
+    <input required name="title" class="input-field mb-3" placeholder="Örn. Royal Canin Adult / Tırnak kesimi">
+    <label class="label-sm">Detay</label>
+    <textarea name="detail" class="input-field mb-3" rows="2" placeholder="Serbest metin: ölçü, miktar, gözlem notu..."></textarea>
+    <label class="label-sm">Tarih</label>
+    <input type="date" name="date" class="input-field mb-3">
+
+    <div id="stockFieldsWrap" class="hidden mb-4 p-3 rounded-xl" style="background:var(--bg);">
+      <label class="label-sm">Tahmini Tüketim Süresi (gün)</label>
+      <input type="number" min="1" name="estimatedDays" class="input-field" placeholder="Örn. 30">
+      <p class="text-[11px] mt-1.5" style="color:#94a3b8;">Örn. 15 kg mama ortalama 30 gün, 5 kg mama ortalama 10 gün gider. Bu süre stok çubuğunu ve kritik seviye hatırlatmalarını hesaplamak için kullanılır.</p>
+    </div>
+
+    <div class="flex gap-3">
+      <button type="button" onclick="closeModal()" class="btn-ghost flex-1 py-3">Vazgeç</button>
+      <button type="submit" class="btn-primary flex-1 py-3">Kaydet</button>
+    </div>
+  </form>`);
+  const logTypeSelect = document.getElementById('nutriLogType');
+  function toggleStockFields(){
+    document.getElementById('stockFieldsWrap').classList.toggle('hidden', logTypeSelect.value !== 'stock');
+  }
+  logTypeSelect.addEventListener('change', toggleStockFields);
+  toggleStockFields();
+  document.getElementById('nutriForm').addEventListener('submit', (e)=> submitRecordForm(e, 'NutritionLog'));
+}
+
+/* =========================================================================
+   ORTAK: form submit / silme / arama
+   ========================================================================= */
+function submitRecordForm(e, sheet){
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const payload = Object.fromEntries(fd.entries());
+  saveRecord(sheet, payload);
+}
+async function saveRecord(sheet, payload){
+  payload.petId = state.activePetId;
+  setLoading(true);
+  try{
+    const created = await apiCreate(sheet, payload);
+    state.data[sheet].push(created);
+    closeModal();
+    renderTab();
+    showToast('Kayıt eklendi ✓');
+  } catch(err){
+    showToast('Kaydedilemedi: ' + err.message, 'error');
+  } finally { setLoading(false); }
+}
+function bindDeleteButtons(){
+  document.querySelectorAll('.delBtn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const { sheet, id } = btn.dataset;
+      if (!confirm('Bu kaydı silmek istediğine emin misin?')) return;
+      setLoading(true);
+      try{
+        await apiDelete(sheet, id);
+        state.data[sheet] = state.data[sheet].filter(r=>r.id!==id);
+        renderTab();
+        showToast('Kayıt silindi', 'info');
+      } catch(err){
+        showToast('Silinemedi: ' + err.message, 'error');
+      } finally { setLoading(false); }
+    });
+  });
+}
+function bindSearch(inputId, cardSelector, textSelectors){
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  input.addEventListener('input', ()=>{
+    const q = input.value.trim().toLowerCase();
+    document.querySelectorAll(cardSelector).forEach(card=>{
+      const text = card.textContent.toLowerCase();
+      card.style.display = text.includes(q) ? '' : 'none';
+    });
+  });
+}
+
+/* =========================================================================
+   INIT
+   ========================================================================= */
+loadAll();
+</script>
+</body>
+</html>
